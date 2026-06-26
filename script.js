@@ -1,21 +1,38 @@
 async function generateImage() {
-
     const prompt = document.getElementById("prompt").value;
     const image = document.getElementById("result");
 
-    if (!prompt) {
-        alert("Please enter a prompt");
+    if (!prompt.trim()) {
+        alert("Please enter a prompt!");
         return;
     }
 
     image.style.display = "none";
 
-    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&seed=${Date.now()}`;
+    try {
+        const response = await fetch("/api/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ prompt })
+        });
 
-    image.src = url;
+        const data = await response.json();
 
-    image.onload = () => {
-        image.style.display = "block";
-    };
+        if (!data.success) {
+            alert(data.error || "Image generation failed.");
+            return;
+        }
 
+        image.src = data.image;
+
+        image.onload = () => {
+            image.style.display = "block";
+        };
+
+    } catch (err) {
+        console.error(err);
+        alert("Something went wrong!");
+    }
 }
