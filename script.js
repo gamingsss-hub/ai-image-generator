@@ -1,10 +1,21 @@
-function generateImage() {
-    const prompt = document.getElementById("prompt").value;
+async function generateImage() {
 
-    if (prompt === "") {
-        alert("Please enter a prompt!");
+    const prompt = document.getElementById("prompt").value;
+    const image = document.getElementById("result");
+
+    if (!prompt) {
+        alert("Please enter a prompt");
         return;
     }
 
-    alert("AI Image Generator abhi connect nahi hua.\nAgle steps me hum isse real AI se connect karenge.");
+    image.style.display = "none";
+
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&seed=${Date.now()}`;
+
+    image.src = url;
+
+    image.onload = () => {
+        image.style.display = "block";
+    };
+
 }
